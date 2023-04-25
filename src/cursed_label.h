@@ -1,0 +1,1 @@
+#define LABEL_TO_FUNCTION(label) (void(*)())&&label
