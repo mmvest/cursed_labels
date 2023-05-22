@@ -36,6 +36,7 @@ struct __attribute__((__packed__)) cursed_flag
                         if((void *)*cur_scan_loc > (void*)&func || (void *)*cur_scan_loc < (void *)&label)     \
                         {                                                       \
                             SET_CONTEXT                                         \
+                            correct_context = 1;                                \
                         }                                                       \
                         cur_scan_loc++;                                         \
                     }                                                           
