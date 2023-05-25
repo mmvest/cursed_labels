@@ -7,10 +7,12 @@
 
 int main()
 {
+    unsigned const sleep_time = 5;
     signal(SIGINT, LABEL_TO_FUNCTION(exit_label));
-    printf( "[+] Sleeping for 10 seconds -- interrupt during this "
-            "sleep to see the label called as the signal handler.\n");
-    sleep(5);
+    printf( "[+] Sleeping for %d seconds -- interrupt during this "
+            "sleep to see the label called as the signal handler.\n", sleep_time);
+    sleep(sleep_time);
+
 
     CURSED_LABEL(main, exit_label)
         printf("\n[+] We hit the label!\n");
