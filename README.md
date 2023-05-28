@@ -1,33 +1,53 @@
-## About The Project
+## Cursed Labels
 
-This project was more of a curiosity than anything substantial. Cursed Labels was born from a passing thought -- "can I pass a label as a signal handler function for a call to signal()?" Turns out you can!
+The label functionality you didn't know you don't need -- use labels as signal handlers or functions whether inside or outside the context in which the label is defined. 
 
 Reasons to use "Cursed Labels":
-* You really want to screw up your code
+* Cleanup of local variables on interrupt by using a label as a signal handler. No more need to define all those variables globally or create a seperate cleanup function -- just use a cursed label!
+* Ever wanted to call a label like a function? Well now you can!
 * Don't
 
-This will wreck havoc on a real body of code and in it's current state has no real use. When your label is called by the signal handler, your stack and register context will likely be entirely different than what it needs to be to execute properly. If you try to access any local variables (essentially any variables that rely on offsets from rsp/rbp or any other register) then the application will likely crash or produce unexpected results. End goal will be to implement a way to set the context of the label properly so that it can access local variables without crashing.
+Cursed Labels works by using C voodoo to cast the label to a function. This wizardry is aided by our `CURSED_LABEL` macro that will handle creating the label, finding the correct stack context for the label, and setting the context appropriately so that the label can run without your application blowing up.
+
+## How to Use
+
+The macro sits inside of a single header, `cursed_label.h`. Simple include that header in whatever project you want to use the labels in. Wherever you would normally create a label, you instead will use the macro as follows:
+```C++
+int main()
+{
+    int ret_val = 0;
+    ...; // Do stuff here
+
+    CURSED_LABEL(main, label_name)
+        ... // Put all your label code here
+        exit(ret_val);
+}
+```
+As you can see, you use it in the place of where you would put your label, but you also give it the name of the function in which the label is located and the name of the label.
+
+To use the cursed label as a function call or signal handler, use the `LABEL_TO_FUNCTION` macro like so:
+```c++
+signal(SIGINT, LABEL_TO_FUNCTION(label_name));
+```
+This macro takes care of the cursed function casting that takes place to make this work.
+
+Note that `CURSED_LABEL` relies on frame pointers existing on the stack, so `fno-omit-frame-pointer` option may need to be passed to `gcc` to get this to work... but no guarantee.
 
 ## Building
-Built on Ubuntu for WSL on Windows 11 using gcc. To build the proof of concept code, from the root of the project run the following:
+Building? Why would you do that. Its just a header.
+
+## PoC Usage
+
+To run the proof of concept executable, first build it:
 ```sh
-mkdir build
-gcc ./example/poc.c -o ./build/poc
+gcc full_poc.c -o full_poc
 ```
 
-## Usage
-
-Using Cursed Labels is simple -- just include the header in your code as shown in the proof of concept and wrap any label you want to call as a function in the `LABLE_TO_FUNCTION()` macro.
-
-To run the proof of concept executable, just run it like any other executable:
+Then, run it like any other executable:
 ```sh
-./build/poc
+./full_poc
 ```
-
-## Roadmap
-
-- [X] Create Proof of concept
-- [O] Add context setting (in progress)
+Note that testing and building was done using `gcc` on an Ubuntu distro.
 
 ## License
 
