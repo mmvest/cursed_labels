@@ -11,7 +11,7 @@ Cursed Labels works by using C voodoo to cast the label to a function. This wiza
 
 ## How to Use
 
-The macro sits inside of a single header, `cursed_label.h`. Simple include that header in whatever project you want to use the labels in. Wherever you would normally create a label, you instead will use the macro as follows:
+The macro sits inside of a single header, `cursed_label.h`. Simply include that header in whatever project you want to use the labels in. Wherever you would normally create a label, you instead will use the macro as follows:
 ```C++
 int main()
 {
@@ -23,18 +23,18 @@ int main()
         exit(ret_val);
 }
 ```
-As you can see, you use it in the place of where you would put your label, but you also give it the name of the function in which the label is located and the name of the label.
+As you can see, you use the macro in place of where you would put your label but you also give it the name of the function in which the label is located and the name of the label.
 
 To use the cursed label as a function call or signal handler, use the `LABEL_TO_FUNCTION` macro like so:
 ```c++
 signal(SIGINT, LABEL_TO_FUNCTION(label_name));
 ```
-This macro takes care of the cursed function casting that takes place to make this work.
+This macro takes care of the cursed function casting that is used to make this work.
 
 Note that `CURSED_LABEL` relies on frame pointers existing on the stack, so `fno-omit-frame-pointer` option may need to be passed to `gcc` to get this to work... but no guarantee.
 
 ## Building
-Building? Why would you do that. Its just a header.
+Building? Why would you do that? Its just a header.
 
 ## PoC Usage
 
